@@ -45,7 +45,7 @@ export const createTemplate = async (templateData) => {
   return response.data;
 };
 
-export const uploadAndDescribeImage = async (formData) => {
+export const uploadImages = async (formData) => {
   try {
     const response = await api.post('/images/upload', formData, {
       headers: {
@@ -54,7 +54,7 @@ export const uploadAndDescribeImage = async (formData) => {
     });
     return response.data;
   } catch (error) {
-    console.error('Error uploading and describing image:', error);
+    console.error('Error uploading images:', error);
     throw error;
   }
 };
