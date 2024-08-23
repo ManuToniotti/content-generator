@@ -7,8 +7,8 @@ const { Dragger } = Upload;
 
 const ImageUploader = ({ onUpload }) => {
   const [fileList, setFileList] = useState([]);
-  const [analysisResults, setAnalysisResults] = useState(null);
-  const [superProductPrompt, setSuperProductPrompt] = useState('');
+  const [aggregatedAnalysis, setAggregatedAnalysis] = useState(null);
+  const [detailedPrompt, setDetailedPrompt] = useState('');
 
   const handleUpload = async ({ file, onSuccess, onError }) => {
     const formData = new FormData();
@@ -17,8 +17,8 @@ const ImageUploader = ({ onUpload }) => {
     try {
       const result = await uploadImages(formData);
       message.success(`${file.name} file uploaded and analyzed successfully.`);
-      setAnalysisResults(prevResults => [...(prevResults || []), ...result.analysisResults]);
-      setSuperProductPrompt(result.superProductPrompt);
+      setAggregatedAnalysis(result.aggregatedAnalysis);
+      setDetailedPrompt(result.detailedPrompt);
       onSuccess(result, file);
     } catch (error) {
       console.error('Upload failed:', error);
@@ -64,24 +64,25 @@ const ImageUploader = ({ onUpload }) => {
           </Col>
         ))}
       </Row>
-      {analysisResults && (
-        <Card title="Image Analysis Results" style={{ marginTop: '20px' }}>
-          {analysisResults.map((result, index) => (
-            <div key={index}>
-              <p><strong>{result.filename}:</strong></p>
-              <p>Dimensions: {result.width}x{result.height}</p>
-              <p>Format: {result.format}</p>
-              <p>Dominant Color: {result.dominantColor}</p>
-              <p>Texture: {result.texture}</p>
-              <p>Edge Count: {result.edgeCount}</p>
-              <p>Feature Count: {result.featureCount}</p>
-            </div>
-          ))}
+      {aggregatedAnalysis && (
+        <Card title="Aggregated Image Analysis Results" style={{ marginTop: '20px' }}>
+          <p><strong>Object Type:</strong> {aggregatedAnalysis.objectType.join(', ')}</p>
+          <p><strong>Colors:</strong> {aggregatedAnalysis.colors.join(', ')}</p>
+          <p><strong>Textures:</strong> {aggregatedAnalysis.textures.join(', ')}</p>
+          <p><strong>Materials:</strong> {aggregatedAnalysis.materials.join(', ')}</p>
+          <p><strong>Features:</strong> {aggregatedAnalysis.features.join(', ')}</p>
+          <p><strong>Labels:</strong> {aggregatedAnalysis.labels.join(', ')}</p>
+          {aggregatedAnalysis.logos.length > 0 && (
+            <p><strong>Logos:</strong> {aggregatedAnalysis.logos.join(', ')}</p>
+          )}
+          {aggregatedAnalysis.text.length > 0 && (
+            <p><strong>Text:</strong> {aggregatedAnalysis.text.join(' ')}</p>
+          )}
         </Card>
       )}
-      {superProductPrompt && (
-        <Card title="Super Product Prompt" style={{ marginTop: '20px' }}>
-          <p>{superProductPrompt}</p>
+      {detailedPrompt && (
+        <Card title="Detailed Product Description" style={{ marginTop: '20px' }}>
+          <p>{detailedPrompt}</p>
         </Card>
       )}
     </>
